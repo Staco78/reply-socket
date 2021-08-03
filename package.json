@@ -1,0 +1,23 @@
+{
+    "name": "socket-js",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "typings": "typings/index.d.ts",
+    "files": [
+        "/dist",
+        "/typings"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc --watch"
+    },
+    "author": "Staco",
+    "dependencies": {
+        "uuid": "^8.3.2",
+        "ws": "^8.0.0"
+    },
+    "devDependencies": {
+        "@types/uuid": "^8.3.1",
+        "@types/ws": "^7.4.7"
+    }
+}
