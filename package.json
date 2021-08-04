@@ -1,5 +1,5 @@
 {
-    "name": "socket-js",
+    "name": "reply-socket",
     "version": "1.0.0",
     "main": "dist/index.js",
     "typings": "typings/index.d.ts",
@@ -7,6 +7,10 @@
         "/dist",
         "/typings"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Staco78/reply-socket.git"
+    },
     "scripts": {
         "build": "tsc",
         "watch": "tsc --watch"

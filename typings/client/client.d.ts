@@ -12,5 +12,5 @@ export declare class Client extends baseClient {
     private parseResponse;
     onResponse(id: string, callback: (data: any) => void): void;
     onError(id: string, callback: (error: string) => void): void;
-    onAction(action: string, callback: (client: Client, message: WsMessage<any>) => void): EventEmitter;
+    onAction(action: string, callback: (message: WsMessage<any>) => void): EventEmitter;
 }

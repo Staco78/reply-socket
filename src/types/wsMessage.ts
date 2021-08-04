@@ -19,7 +19,7 @@ export default class WsMessage<T = any, V = any> {
         this.client = client;
     }
 
-    respond(data: V) {
+    reply(data: V) {
         this.client.sendRaw({ data, id: this.id, type: 1 });
     }
 

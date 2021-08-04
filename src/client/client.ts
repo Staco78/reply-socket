@@ -18,7 +18,7 @@ export class Client extends baseClient {
                 this.parseMessage(data);
             } catch (e) {
                 if (e instanceof WsError) this.error(e.message, e.fatal);
-                else this.error("Unkown server error", true);
+                else this.error("Unkown server error: " + e.message ?? e, true);
             }
         });
     }
@@ -60,8 +60,6 @@ export class Client extends baseClient {
             if (!json.action) throw new WsError("Invalid json: missing action");
             if (typeof json.action !== "string") throw new WsError("Invalid json");
 
-            console.log(json.action);
-
             if (!json.id) throw new WsError("Invalid json: missing id");
 
             this.actionEventEmitter.emit(json.action, new WsMessage<this>(json, this));
@@ -83,15 +81,16 @@ export class Client extends baseClient {
         this.responseErrorEventEmitter.on(id, callback);
     }
 
-    onAction(action: string, callback: (client: Client, message: WsMessage<any>) => void) {
-        return this.actionEventEmitter.on(action, function (client: Client, message: WsMessage) {
+    onAction(action: string, callback: (message: WsMessage<any>) => void) {
+        const client = this;
+        return this.actionEventEmitter.on(action, function (message: WsMessage) {
             try {
-                callback(client, message);
+                callback(message);
             } catch (e) {
                 if (e instanceof WsError) {
                     if (e.fatal) client.error(e.message, true);
                     else message.error(e.message);
-                } else client.error("Unkown server error", true);
+                } else client.error("Unkown server error: " + e.message ?? e, true);
             }
         });
     }

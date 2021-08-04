@@ -4,7 +4,7 @@ import WsError from "../types/wsError";
 import Client from "./client";
 import WsMessage from "../types/wsMessage";
 
-export class Server extends EventEmitter {
+export default class Server extends EventEmitter {
     readonly ws;
 
     private responseEventEmitter = new EventEmitter();
@@ -19,21 +19,22 @@ export class Server extends EventEmitter {
         this.ws = new WebSocket.Server({ port });
 
         this.ws.on("close", (...args) => this.emit("close", ...args));
-        this.ws.on("connection", (...args) => this.emit("connection", ...args));
         this.ws.on("error", (...args) => this.emit("error", ...args));
         this.ws.on("headers", (...args) => this.emit("headers", ...args));
         this.ws.on("listening", (...args) => this.emit("listening", ...args));
 
-        this.ws.on("connection", wss => {
+        this.ws.on("connection", (wss, r) => {
             const client = new Client(wss, this);
             this.clients.push(client);
+
+            this.emit("connection", client, r);
 
             wss.on("message", data => {
                 try {
                     this.parseMessage(data, client);
                 } catch (e) {
                     if (e instanceof WsError) client.error(e.message, e.fatal);
-                    else client.error("Unkown server error", true);
+                    else client.error("Unkown server error: " + e.message ?? e, true);
                 }
             });
 
@@ -52,27 +53,22 @@ export class Server extends EventEmitter {
             throw new WsError("Invalid json");
         }
 
+        if (!json.id) throw new WsError("Invalid json: missing id");
+
         if (json.type === undefined) throw new WsError("Invalid json: missing type");
         if (json.type !== 0 && json.type !== 1) throw new WsError("Invalid json: unkown type");
 
         if (!json.data) throw new WsError("Invalid json: missing data");
-        if (typeof json.data !== "object") throw new WsError("Invalid json");
 
         if (json.type === 0) {
             if (!json.action) throw new WsError("Invalid json: missing action");
             if (typeof json.action !== "string") throw new WsError("Invalid json");
-
-            console.log(json.action);
-
-            if (!json.id) throw new WsError("Invalid json: missing id");
 
             this.actionEventEmitter.emit(json.action, client, new WsMessage(json, client));
         } else this.parseResponse(json);
     }
 
     private parseResponse(json: wsMessageData) {
-        if (!json.id || typeof json.id !== "string") throw new WsError("Invalid json: missing id");
-
         if (json.error) this.responseErrorEventEmitter.emit(json.id, json.error);
         else this.responseEventEmitter.emit(json.id, json.data);
     }
@@ -97,7 +93,7 @@ export class Server extends EventEmitter {
                 if (e instanceof WsError) {
                     if (e.fatal) client.error(e.message, true);
                     else message.error(e.message);
-                } else client.error("Unkown server error", true);
+                } else client.error(`Unkown server error: ${e.message ?? e}`, true);
             }
         });
     }

@@ -5,6 +5,6 @@ export default class WsMessage<T = any, V = any> {
     readonly id: string;
     private client;
     constructor(data: wsMessageData<T>, client: baseClient);
-    respond(data: V): void;
+    reply(data: V): void;
     error(message: string): void;
 }

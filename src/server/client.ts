@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 import { generateUuid } from "../utils";
-import { Server } from "./server";
+import Server from "./server";
 import baseClient from "../types/baseClient";
 
 export default class Client extends baseClient {
@@ -13,7 +13,7 @@ export default class Client extends baseClient {
     send(action: string, data: any) {
         return new Promise<any>((resolve, reject) => {
             const id = generateUuid();
-            this.sendRaw({ action, data, type: 1, id }, e => {
+            this.sendRaw({ action, data, type: 0, id }, e => {
                 if (e) reject(e);
             });
 
