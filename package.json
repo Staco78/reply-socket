@@ -1,5 +1,5 @@
 {
-    "name": "reply-socket",
+    "name": "reply-ws",
     "version": "1.0.0",
     "main": "dist/index.js",
     "typings": "typings/index.d.ts",
@@ -9,7 +9,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/Staco78/reply-socket.git"
+        "url": "https://github.com/Staco78/reply-ws.git"
     },
     "scripts": {
         "build": "tsc",
